@@ -22,7 +22,7 @@ func Diff(t testing.TB, have, want interface{}) bool {
 	t.Helper()
 	eq := cmp.Equal(have, want)
 	if !eq {
-		t.Error(cmp.Diff(have, want))
+		t.Error(cmp.Diff(want, have))
 	}
 	return eq
 }
