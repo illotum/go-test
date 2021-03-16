@@ -3,6 +3,7 @@
 package test
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -11,7 +12,15 @@ import (
 
 func Eq(t testing.TB, have, want interface{}) bool {
 	t.Helper()
-	eq := reflect.DeepEqual(have, want)
+	haveE, okHaveE := have.(error)
+	wantE, okWantE := have.(error)
+	var eq bool
+	switch {
+	case okHaveE && okWantE:
+		eq = errors.Is(haveE, wantE)
+	default:
+		eq = reflect.DeepEqual(have, want)
+	}
 	if !eq {
 		t.Errorf("\nhave %+v\nwant %+v", have, want)
 	}
