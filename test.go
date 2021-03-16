@@ -5,15 +5,14 @@ package test
 import (
 	"errors"
 	"reflect"
-	"testing"
 
 	"github.com/google/go-cmp/cmp"
 )
 
-func Eq(t testing.TB, have, want interface{}) bool {
+func Eq(t ErrorPrinter, have, want interface{}) bool {
 	t.Helper()
 	haveE, okHaveE := have.(error)
-	wantE, okWantE := have.(error)
+	wantE, okWantE := want.(error)
 	var eq bool
 	switch {
 	case okHaveE && okWantE:
@@ -27,11 +26,17 @@ func Eq(t testing.TB, have, want interface{}) bool {
 	return eq
 }
 
-func Diff(t testing.TB, have, want interface{}) bool {
+func Diff(t ErrorPrinter, have, want interface{}) bool {
 	t.Helper()
 	eq := cmp.Equal(have, want)
 	if !eq {
 		t.Error(cmp.Diff(want, have))
 	}
 	return eq
+}
+
+type ErrorPrinter interface {
+	Helper()
+	Error(...interface{})
+	Errorf(string, ...interface{})
 }
