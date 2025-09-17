@@ -11,6 +11,23 @@ import (
 
 func Eq(t ErrorPrinter, have, want interface{}) bool {
 	t.Helper()
+	eq := eq(have, want)
+	if !eq {
+		t.Errorf("\nhave %+v\nwant %+v", have, want)
+	}
+	return eq
+}
+
+func Neq(t ErrorPrinter, have, want interface{}) bool {
+	t.Helper()
+	eq := !eq(have, want)
+	if !eq {
+		t.Errorf("\nhave %+v\nwant %+v", have, want)
+	}
+	return eq
+}
+
+func eq(have, want interface{}) bool {
 	haveE, okHaveE := have.(error)
 	wantE, okWantE := want.(error)
 	var eq bool
@@ -19,9 +36,6 @@ func Eq(t ErrorPrinter, have, want interface{}) bool {
 		eq = errors.Is(haveE, wantE)
 	default:
 		eq = reflect.DeepEqual(have, want)
-	}
-	if !eq {
-		t.Errorf("\nhave %+v\nwant %+v", have, want)
 	}
 	return eq
 }
