@@ -20,11 +20,19 @@ func Eq(t ErrorPrinter, have, want interface{}) bool {
 
 func Neq(t ErrorPrinter, have, want interface{}) bool {
 	t.Helper()
-	eq := !eq(have, want)
-	if !eq {
-		t.Errorf("\nhave %+v\nwant %+v", have, want)
+	neq := !eq(have, want)
+	if !neq {
+		t.Errorf("\nhave %+v\nwant !%+v", have, want)
 	}
-	return eq
+	return neq
+}
+
+func Nil(t ErrorPrinter, have interface{}, must bool) bool {
+	t.Helper()
+	if must {
+		return Eq(t, have, nil)
+	}
+	return Neq(t, have, nil)
 }
 
 func eq(have, want interface{}) bool {
